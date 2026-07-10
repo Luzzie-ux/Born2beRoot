@@ -1,0 +1,19 @@
+# Auth has to be limited to 3 attempts
+Defaults    passwd_tries=3
+Defaults    badpass_message="[ERROR] INCORRET PASSWORD, TRY AGAIN"
+
+# Sudo uses log path
+Defaults    logfile="/var/log/sudo/sudo_config"
+
+# Sudo I/O actions
+Defaults    log_input
+Defaults    log_output
+
+# Logs directory path
+Defaults    iolog_dir="/var/log/sudo"
+
+# TTY requirement
+Defaults    requiretty
+
+# Restricted paths for sudo
+Defaults    secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin"
