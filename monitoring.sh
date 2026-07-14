@@ -1,67 +1,69 @@
 #!/usr/bin/bash
 
-# This Bash script must display all the following information every 10 minutes:
-
-# •The architecture of the OS and kernel version.
+# Architecture
 arch=$(uname -a)
 
-# •The number of physical processors.
-pcpu=$(grep -c "physical id" /proc/cpuinfo)
+# Physical CPU
+fcpu=$(grep -c "physical id" /proc/cpuinfo)
 
-# •The number of virtual processors.
-vcpu=$(grep -c processor "/proc/cpuinfo")
+# Virtual CPU
+vcpu=$(grep -c processor /proc/cpuinfo)
 
-# •The currently available RAM on your server and its utilization rate as a percentage.
-used=$(free -m | grep -i mem | awk '{print $3}')
-total=$(free -m | grep -i mem | awk '{print $2}')
-ram=$(((used * 100 / total)))
+# RAM usage
+free=$(free -m | grep -i mem)
+ram_use=$(echo "$free" | awk '{print $3}')
+ram_total=$(echo "$free" | awk '{print $2}')
+ram=$(echo "$free" | awk '{printf "%2.f", $3/$2*100}')
 
-# •The currently available storage on your server and its utilization rate as a percentage.
+# Disk usage
 df=$(df -m | grep -i dev | grep -v boot)
-muse=$(echo "$df" | awk '{use += $3} END {print use}')
-mtotal=$(echo "$df" | awk '{total += $2} END {print total}')
-mgb=$((mtotal / 1024))
-mem=$(((muse * 100 / mtotal)))
+mem_use=$(echo "$df" | awk '{use += $3} END {print use}')
+mem_total=$(echo "$df" | awk '{total += $2} END {print total}')
+ptmem=$((mem_total / 1024))
+mem=$(((mem_use * 100 / mem_total)))
 
-# •The current CPU utilization rate as a percentage.
-cpu=$()
+# CPU usage
+load=$(vmstat 1 2 | tail -1 | awk '{print $15}')
+cpu_info=$(expr 100 - $load)
+cpu=$(printf "%.1f%%" $cpu_info)
 
-# •The date and time of the last reboot.
-reboot=$()
+# Last Boot
+reboot=$(who -b | awk '{print $3 " " $4}')
 
-# •Whether LVM is active or not.
-lvm=$()
+# Whether LVM is active or not
+ls=$(lsblk | grep -i lvm | wc -l)
+if [ $ls -gt 0 ]
+    then lvm="yes"
+else 
+    lvm="no"
+fi
 
-# •The number of active connections.
-net=$()
+# The number of active connections
+net=$(ss -ta | grep ESTAB | wc -l)
 
-# •The number of users using the server.
-usr=$()
+# The number of users using the server
+usr=$(users | wc -w)
 
-# •The IPv4 address of your server and its MAC (Media Access Control) address.
-ip=$()
-mac=$()
+# The IPv4 address and MAC address
+ip=$(hostname -I)
+mac=$(ip link | grep -i link/ether | awk '{print $2}')
 
-# •The number of commands executed with the sudo program.
-sudo=$()
+# The number of commands executed with the sudo program
+sudo=$(journalctl _COMM=sudo | grep -i COMMAND | wc -l)
 
-script(){
-    echo "Broadcast message from root@rodrpere (tty1) (today)"
-    echo "  Architecture: $arch"
-    echo "  Physical CPU: $pcpu"
-    echo "  vCPU: $vcpu"
-    echo "  Memory Usage: $used/${total}MB ($ram)%"
-    echo "  Disk Usage: $muse/${mgb}GB ($mem)%"
-    echo "  CPU load: $cpu"
-    echo "  Last boot: $reboot"
-    echo "  LVM use: $lvm"
-    echo "  TCP Connections: $net"
-    echo "  User log: $usr"
-    echo "  Network: IP $ip $mac"
-    echo "  Sudo: $sudo"
-}
-
-script
+# Print information
+wall "  Architecture: $arch
+    Physical CPU: $fcpu
+    vCPU: $vcpu
+    RAM usage: $ram_use/${ram_total}MB ($ram%)
+    Disk usage: $mem_use/${ptmem}GB ($mem%)
+    CPU load: $cpu
+    Last boot: $reboot
+    LVM use: $lvm
+    TCP Connections: $net ESTABLISHED
+    User log: $usr
+    Network: $ip ($mac)
+    Sudo: $sudo cmd"
 
 # Example:
 # Broadcast message from root@wil (tty1) (Sun Apr 25 15:45:00 2021):
@@ -77,4 +79,3 @@ script
 # User log: 1
 # Network: IP 10.0.2.15 (08:00:27:51:9b:a5)
 # Sudo: 42 cmd
-#p10k configure
