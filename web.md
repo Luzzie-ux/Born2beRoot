@@ -41,7 +41,36 @@ We allow remove anon users because it was only for debuging purposes just like t
 We allow the root login not being able to be done remotely to prevent anyone to connect by guessing the password
 We reload privilege tables to reload the SQL permissions tables, changing them to the secure settings
 
-end
+### Create a database
+
+Once everythin is setup to use MariaDB we will run the following command to bring the mariadb terminal up:
+`mariadb`
+
+Now to make a database for our wordpress server we will type:
+```mariadb
+CREATE DATABASE "wp_database_name";
+```
+Remember that all commands in mariadb finish with a semicolon, if you forget it the terminal will show a new column of arrows waiting for the semicolon
+
+Next we will make a user inside the database, and add it to the Wordpress database:
+```mariadb
+CREATE USER 'username'@'localhost' IDENTIFIED BY '12345';
+
+GRANT ALL PRIVILEGES ON "wp_database_name.*" TO 'username'@'localhost';
+```
+
+Now we update the permissions so the changes we make take effect:
+```mariadb
+FLUSH PRIVILEGES
+```
+
+Once everything is completed just type `exit` to leave the mariadb terminal :D
+
+If you wish to the databases run the following command:
+```mariadb
+SHOW DATABASES;
+```
+
 ## Apache2
 
 header
