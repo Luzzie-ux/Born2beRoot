@@ -5,7 +5,7 @@
 | LightTPD  | 		| https://www.lighttpd.net/ | 
 | PHP 	    | 		| https://www.php.net/ 		| 
 | MariaDB   | 		| https://mariadb.org/ 		| 
-| Apache2   | 		| https://httpd.apache.org/ | 
+| Litespeed | 		| https://openlitespeed.org/| 
 | Wordpress | 		| https://wordpress.org/ 	| 
 
 ## Light TPD
