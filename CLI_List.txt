@@ -1,0 +1,18 @@
+systemctl [option] [service]
+service [serive] [option]
+lsblk
+getent add[ent] [name]
+crontab -u root -e
+passwd [name]
+ufw [option] [service]
+hostname
+which [service]
+dpkg -i
+grep -i
+uname [option]
+
+to change hostname go to: 
+/etc/hostname and /etc/hosts
+then reboot
+
+to change password call: passwd [username]
